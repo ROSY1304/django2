@@ -1,15 +1,16 @@
 # Frameworks
 Django==5.2.7
-djangorestframework==3.19.3
+djangorestframework==3.16.1
 
 # WSGI server
 gunicorn==23.0.0
+
+# ASGI support
 asgiref==3.10.0
 
-# Database utils
+# Database utilities
 sqlparse==0.5.3
 dj-database-url==1.0.0
-psycopg2-binary==2.9.9   # Solo si usas PostgreSQL
 
 # HTTP / Requests
 requests==2.32.5
@@ -18,7 +19,3 @@ certifi==2025.10.5
 charset-normalizer==3.4.4
 idna==3.11
 packaging==25.0
-
-# Environment / Timezone
-python-dotenv==1.0.0
-pytz==2025.10
