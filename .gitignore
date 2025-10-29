@@ -1,0 +1,41 @@
+# Entornos virtuales
+venv/
+env/
+*.env
+.env
+
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+
+# Base de datos local (¡No subas db.sqlite3 si usas Postgres/MySQL en producción!)
+db.sqlite3
+*.sqlite3
+
+# Archivos de configuración local/secretos (si los usas)
+local_settings.py
+*.local
+.env.*
+
+# Archivos estáticos recolectados (los genera `collectstatic`)
+staticfiles/
+static_collected/
+
+# Archivos multimedia subidos por usuarios (si tienes)
+media/
+
+# Archivos de IDE/Editor
+.vscode/
+.idea/
+*.swp
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Archivos de cobertura de tests (si usas)
+.coverage
+htmlcov/

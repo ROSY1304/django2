@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrenamiento y Evaluación de Modelo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { color: #0056b3; text-align: center; }
+        form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; }
+        label { font-weight: bold; }
+        input[type="number"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; align-self: flex-start; }
+        button:hover { background-color: #0056b3; }
+        #results { margin-top: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; }
+        #results h2 { color: #007bff; margin-bottom: 15px; }
+        .result-item { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px dashed #eee; }
+        .result-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .loading { text-align: center; font-style: italic; color: #666; }
+        .error { color: red; font-weight: bold; }
+        img { max-width: 100%; height: auto; display: block; margin-top: 10px; border: 1px solid #eee; border-radius: 4px; padding: 5px; background-color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Entrenamiento y Evaluación de Modelo Random Forest</h1>
+
+        <form id="trainForm">
+            <label for="num_samples">Número de datos a evaluar (muestra aleatoria):</label>
+            <input type="number" id="num_samples" name="num_samples" required min="1" value="5000"> <button type="submit">Evaluar</button>
+        </form>
+
+        <div id="results">
+            <h2>Resultados</h2>
+            <p id="loadingMessage" class="loading" style="display: none;">Evaluando modelo y generando gráficos...</p>
+            <div id="errorMessage" class="error" style="display: none;"></div>
+
+            <div id="f1ScoreResult" class="result-item"></div>
+
+            <div id="regressionPlotNoScale" class="result-item"></div>
+            <div id="regressionPlotScaled" class="result-item"></div>
+
+            <div id="treeVisualization" class="result-item"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('trainForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const numSamples = document.getElementById('num_samples').value;
+            // CORREGIDO: Obtener el div correcto
+            const f1ScoreResultDiv = document.getElementById('f1ScoreResult');
+            const treeVisualizationDiv = document.getElementById('treeVisualization');
+            const regressionPlotNoScaleDiv = document.getElementById('regressionPlotNoScale');
+            const regressionPlotScaledDiv = document.getElementById('regressionPlotScaled');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Limpiar resultados anteriores
+            f1ScoreResultDiv.innerHTML = ''; // Limpiar div correcto
+            treeVisualizationDiv.innerHTML = '';
+            regressionPlotNoScaleDiv.innerHTML = '';
+            regressionPlotScaledDiv.innerHTML = '';
+            errorMessage.style.display = 'none';
+            loadingMessage.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/train/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', },
+                    body: JSON.stringify({ num_samples: numSamples }),
+                });
+
+                const data = await response.json();
+                loadingMessage.style.display = 'none';
+
+                if (response.ok) {
+
+                    // --- CORREGIDO: Leer y mostrar f1_score ---
+                    if (data.f1_score !== null && data.f1_score !== undefined) {
+                        f1ScoreResultDiv.innerHTML = `<h3>F1-Score (Clasificación):</h3> <p style="font-size: 1.2em; font-weight: bold;">${data.f1_score.toFixed(4)}</p>`;
+                    } else {
+                         f1ScoreResultDiv.innerHTML = `<h3>F1-Score (Clasificación):</h3> <p>No disponible.</p>`;
+                    }
+                    // ------------------------------------------
+
+                    // Gráficos Regresión (sin cambios)
+                    if (data.regression_plot_no_scale) {
+                        regressionPlotNoScaleDiv.innerHTML = `<h3>Comparación Regresión (Sin Escalar):</h3><img src="data:image/png;base64,${data.regression_plot_no_scale}" alt="Gráfico Regresión Sin Escalar">`;
+                    }
+                    if (data.regression_plot_scaled) {
+                        regressionPlotScaledDiv.innerHTML = `<h3>Comparación Regresión (Con Escalar):</h3><img src="data:image/png;base64,${data.regression_plot_scaled}" alt="Gráfico Regresión Con Escalar">`;
+                    }
+
+                    // Gráfico Árbol (sin cambios)
+                    if (data.tree_visualization) {
+                        treeVisualizationDiv.innerHTML = `<h3>Visualización del Árbol (Clasificador):</h3><img src="data:image/png;base64,${data.tree_visualization}" alt="Visualización del Árbol">`;
+                    }
+
+                } else {
+                    errorMessage.textContent = `Error: ${data.error || 'Algo salió mal.'}`;
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                loadingMessage.style.display = 'none';
+                errorMessage.textContent = `Error de red o del servidor: ${error.toString()}`;
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

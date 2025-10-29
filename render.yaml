@@ -1,0 +1,32 @@
+# render.yaml
+
+services:
+  # Servicio Web para Django (usando Gunicorn)
+  - type: web
+    name: django1 # Elige un nombre único para tu app en Render
+    env: python
+    buildCommand: "./build.sh" # Script para construir (ver paso 3)
+    startCommand: "gunicorn Django.wsgi:application" # Comando para iniciar (reemplaza 'Django' si tu proyecto se llama diferente)
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true # Render generará una SECRET_KEY segura
+      - key: WEB_CONCURRENCY
+        value: 4 # Número de workers Gunicorn (ajusta según tu plan de Render)
+      - key: PYTHON_VERSION
+        value: 3.12.4 # Especifica tu versión de Python (¡Usa la misma que en tu venv!)
+    # --- IMPORTANTE: Instalar Graphviz (paquete del sistema) ---
+    buildpacks:
+      - heroku/python
+    aptPackages: # Le dice a Render que instale paquetes de sistema operativo
+      - graphviz
+
+  # Base de datos PostgreSQL (Render la crea automáticamente si la defines aquí)
+  - type: psql
+    name: BdRandom # Nombre para tu base de datos en Render
+    plan: free # O un plan de pago si necesitas más recursos
+    # Render inyectará la DATABASE_URL automáticamente en el servicio web
+
+# Opcional: Redirecciones, dominios personalizados, etc.
+# databases: # Alternativa para definir la DB si no se hace en 'services'
+#   - name: mi-basedatos
+#     plan: free
