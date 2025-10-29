@@ -1,24 +1,19 @@
-# Frameworks
+# Framework
 Django==5.2.7
 djangorestframework==3.16.1
 
 # WSGI server
 gunicorn==23.0.0
 
-# ASGI support
-asgiref==3.10.0
-
-# Database utilities
-sqlparse==0.5.3
-dj-database-url==1.0.0
-
-# HTTP / Requests
-requests==2.32.5
-urllib3==2.5.0
-certifi==2025.10.5
-charset-normalizer==3.4.4
-idna==3.11
-packaging==25.0
-
 # Static files in production
 whitenoise==6.5.0
+
+# Data analysis & ML
+pandas==2.1.1
+numpy==1.27.5
+matplotlib==3.8.1
+scikit-learn==1.3.1
+joblib==1.3.2
+
+# Other utilities
+json5==3.1.3  # opcional, si trabajas con json avanzado
