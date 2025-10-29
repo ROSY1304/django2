@@ -1,19 +1,19 @@
-# Framework
+# Django y REST
 Django==5.2.7
 djangorestframework==3.16.1
-
-# WSGI server
 gunicorn==23.0.0
-
-# Static files in production
 whitenoise==6.5.0
 
-# Data analysis & ML
-pandas==2.1.1
-numpy==1.27.5
+# Numpy y Pandas (versiones que funcionan con Python 3.13 sin compilar)
+numpy==1.26.5
+pandas==2.0.3
+
+# Matplotlib para gráficos (usar backend 'Agg')
 matplotlib==3.8.1
+
+# Scikit-learn y joblib para ML
 scikit-learn==1.3.1
 joblib==1.3.2
 
-# Other utilities
-json5==3.1.3  # opcional, si trabajas con json avanzado
+# Opcional: Cython (si alguna dependencia la necesita)
+Cython==0.29.40
